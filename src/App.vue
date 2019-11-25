@@ -4,10 +4,10 @@
       <div class="line" @animationend="handleLineAnimationEnd"></div>
     </div>
     <div :class="['center', 'center-text']" v-if="lineAnimation">愿你决定</div>
-    <img 
+    <div 
       v-for="(item,index) in allImage"
       :key="'img_' + item + '_bg'"
-      :src="item"
+      :style="{backgroundImage:`url(${item})`}"
       :class="['center','main-img-bg',currentImgIndex === index?'active':'' ]" 
       />
 
@@ -54,7 +54,14 @@ import 'normalize.css'
 import Lyric from './components/Lyric.vue'
 import { convertLrcObject } from './assets/js/utils'
 import { allImage } from './assets/assets.json'
-allImage.sort(()=>Math.random() - 0.5)
+import NoSleep from 'nosleep.js'
+allImage.sort(()=>Math.random() - 0.5);
+
+var noSleep = new NoSleep();
+document.addEventListener('click', function enableNoSleep() {
+  document.removeEventListener('click', enableNoSleep, false);
+  noSleep.enable();
+}, false);
 
 export default {
   name: 'app',
@@ -204,11 +211,14 @@ body{
   }
  
   .main-img-bg{
-    min-width: 100vw;
-    min-height: 100vh;
+    width: 100vw;
+    height: 100vh;
     opacity: 0;
     transition: opacity ease 1s;
     object-fit: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: auto 100%;
     filter: blur(10px);
 
     &.active {
