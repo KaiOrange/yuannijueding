@@ -13,7 +13,7 @@ module.exports = {
   ],
   // add your custom rules here
   rules: {
-    "no-console": "warn",
+    "no-console": process.env.NODE_ENV === 'production' ? 'off' : 'warn',
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
   }

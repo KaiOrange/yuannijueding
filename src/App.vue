@@ -1,7 +1,9 @@
 <template>
   <div id="app">
-    <div :class="['center', 'line']" @animationend="handleLineAnimationEnd"></div>
-    <div :class="['center', 'center-text']">愿你决定</div>
+    <div class="center" v-if="lineAnimation">
+      <div class="line" @animationend="handleLineAnimationEnd"></div>
+    </div>
+    <div :class="['center', 'center-text']" v-if="lineAnimation">愿你决定</div>
     <img 
       v-for="(item,index) in allImage"
       :key="'img_' + item + '_bg'"
@@ -35,7 +37,7 @@
     </audio>
 
     <div 
-      :class="['center','player',isPlayerInCorner?'corner':'',isShowPlayer?'show':'']"
+      :class="['center','player',isShowPlayer?'show':'',isPlayerInCorner?'corner':'']"
       @click="handlePlayerClick"
       @transitionend="handlePlayerShow"
       >
@@ -78,6 +80,7 @@ export default {
     setTimeout(() => {
       this.lineAnimation = true;
     }, 200);
+    // eslint-disable-next-line no-console
     console.info('源代码：https://github.com/KaiOrange/yuannijueding');
   },
   beforeDestroy() {
@@ -108,7 +111,6 @@ export default {
     handlePause(){
       this.stopLrcInterval();
       this.isPlaying = false;
-      this.isPlayerInCorner = true;
     },
     getLrc(cb){
       this.axios.get('/愿你决定.lrc').then((res)=>{
@@ -151,8 +153,7 @@ export default {
       if (classList.indexOf('show') !== -1 && classList.indexOf('playing') === -1) {
         let myAudio = this.$refs.audio;
         if (!myAudio.ended) {
-          var audioPlay = myAudio.play();
-          audioPlay.catch(()=>{
+          myAudio.play().catch(()=>{
             this.isShowTip = true
           })
         }
@@ -216,10 +217,11 @@ body{
   }
 
   .line{
-    width: 2px;
-    height: 0;
-    background: #ffffff;
-    animation: line-animation linear 5s forwards;
+      width: 2px;
+      height: 100%;
+      background: #ffffff;
+      animation: line-animation linear 5s forwards;
+      position: relative;
   }
 
   .center-text{
@@ -230,16 +232,16 @@ body{
   }
 
   .player{
-    width: 70vmin;
-    height: 70vmin;
+    width: 0;
+    height: 0;
     border-radius: 50%;
     overflow: hidden;
-    transform: translate(-50%, -50%) scale(0);
     transition: all ease 1s;
     transform-origin: center;
 
     &.show{
-      transform: translate(-50%, -50%) scale(1);
+      width: 70vmin;
+      height: 70vmin;
     }
 
     &.corner{
@@ -283,41 +285,40 @@ body{
 @keyframes line-animation {
   18% {
     height: 100vmax;
-    transform: translate(-50%, -50%) ;
   }
   36%{
     height: 100vmax;
-    transform: translate(-50%, -50%) rotate(90deg);
+    transform: rotate(90deg);
   }
   37%{
     height: 100vw;
-    transform: translate(-50%, -50%) rotate(90deg);
+    transform: rotate(90deg);
   }
   50%{
     height: 70vw;
-    transform: translate(-50%, -50%) rotate(90deg);
+    transform: rotate(90deg);
   }
   
   60%{
     height: 70vw;
-    transform: translate(-50%, calc(-50% + 30px)) rotate(90deg);
+    transform: translate(0%, 30px) rotate(90deg);
   }
   
   90%{
     height: 70vw;
-    transform: translate(-50%, calc(-50% + 30px)) rotate(90deg);
+    transform: translate(0%, 30px) rotate(90deg);
     left:50%;
   }
 
   99%{
     height: 70vw;
-    transform: translate(-50%, calc(-50% + 30px)) rotate(90deg);
+    transform: translate(0%, 30px) rotate(90deg);
     left:150vw;
     display: block;
   }
   100%{
     height: 70vw;
-    transform: translate(-50%, calc(-50% + 30px)) rotate(90deg);
+    transform: translate(0%, 30px) rotate(90deg);
     left:150vw;
     display: none;
   }
