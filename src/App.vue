@@ -11,16 +11,16 @@
       :class="['center','main-img-bg',currentImgIndex === index?'active':'' ]" 
       />
 
-    <img 
+    <div 
       v-for="(item,index) in allImage"
       :key="'img_' + item"
-      :src="item"
+      :style="{backgroundImage:`url(${item})`}"
       :class="['center','main-img',currentImgIndex === index?'active':'' ]" 
       />
     
-    <img 
+   <div  
       key="img_buy"
-      src="/img/buy.gif"
+      :style="{backgroundImage:`url(/img/buy.gif)`}"
       :class="['center', 'no-transition', 'main-img',currentImgIndex === -2?'active':'' ]" 
       />
 
@@ -198,8 +198,13 @@ body{
   
   .main-img{
     width: 100%;
+    height: 100%;
     opacity: 0;
     transition: opacity ease 1s;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% auto;
 
     &.active {
       opacity: 1;
