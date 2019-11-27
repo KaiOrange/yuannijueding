@@ -74,7 +74,6 @@ export default {
       timer:null,
       allImage:allImage,
       lrcs:null,
-      currentTime:-6,
       currentImgIndex:-1,// -2为再见图片
       lineAnimation:false,
       isShowPlayer:false,
@@ -125,24 +124,25 @@ export default {
       })
     },
     startLrcInterval(){
-      let myAudio = this.$refs.audio
-      let imgLength = this.allImage.length
+      let myAudio = this.$refs.audio;
+      let imgLength = this.allImage.length;
+      var oldText = null;
       this.timer = setInterval(()=>{
         //获取当前的播放时间 减去1秒修复了歌词不对应的问题
         var curTime = myAudio.currentTime - 1;
-        if (curTime >= 236 && this.currentImgIndex !== -2) {
-          this.currentTime = -6;
-          this.currentImgIndex = -2;
-        } else if (curTime < 236 && Math.abs(this.currentTime - curTime) > 5) {
-          this.currentTime = curTime;
-          this.currentImgIndex = ++this.currentImgIndex % imgLength
-        }
+        
         let lrcs = this.lrcs;
         for (var i = 0; i < lrcs.length; i++) {
           if ((curTime > lrcs[i][0]) && (lrcs[i+1] ? curTime < lrcs[i+1][0] : true)) {
             this.text = lrcs[i][1];
             break;
           }
+        }
+        if (curTime >= 236 && this.currentImgIndex !== -2) {
+          this.currentImgIndex = -2;
+        } else if (curTime < 236 && oldText !== this.text && this.text.trim()) {
+          oldText = this.text
+          this.currentImgIndex = ++this.currentImgIndex % imgLength
         }
       }, 200);
     },
