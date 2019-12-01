@@ -105,7 +105,7 @@ export default {
       isPlayerInCorner:false,
       isPlaying:false,
       isShowTip:false,
-      isCommentsDisabled: localStorage.getItem('isCommentsDisabled') !== 'false',
+      isCommentsDisabled: localStorage.getItem('isCommentsDisabled') === 'true',
       comments:[]
     };
   },
