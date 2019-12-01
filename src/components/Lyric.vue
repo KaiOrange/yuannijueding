@@ -33,17 +33,15 @@ export default {
     right: 0;
     margin: 0 5vw;
     z-index: 10;
-    color:springgreen;
+    color: #00ff7f;
     font-weight: bold;
     font-size: 20px;
     line-height: 1.4;
 
-    background-image: linear-gradient(left, #FF9800 0%,
-      #66ffff 16%, 
-      #FFEB3B 32%, 
-      #e206f1 50%, 
-      #FFEB3B 66%,
-      #66FFFF 82%, #FF9800 100%);
+    background-image: linear-gradient(left, #66ffff 0%,
+      #00ff7f 25%, 
+      #f9c835 50%, 
+      #00ff7f 75%, #66ffff 100%);
     background-size: 200% 100%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
