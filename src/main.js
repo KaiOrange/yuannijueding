@@ -1,11 +1,12 @@
-import Vue from 'vue'
-import App from './App.vue'
-import axios from 'axios'
-import Vueaxios from 'vue-axios'
+import Vue from "vue";
+import App from "./App.vue";
+import axios from "axios";
+import Vueaxios from "vue-axios";
+import "./registerServiceWorker";
 
-Vue.use(Vueaxios, axios)
-Vue.config.productionTip = false
+Vue.use(Vueaxios, axios);
+Vue.config.productionTip = false;
 
 new Vue({
-  render: h => h(App),
-}).$mount('#app')
+  render: h => h(App)
+}).$mount("#app");
