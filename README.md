@@ -1,24 +1,7 @@
-# yuannijueding
+# 愿你决定 - 张国荣
 
-## Project setup
-```
-pnpm install
-```
+See [https://ynjd.kai666666.top/](https://ynjd.kai666666.top/)
 
-### Compiles and hot-reloads for development
-```
-pnpm run serve
-```
+![预览](/preview.png)
 
-### Compiles and minifies for production
-```
-pnpm run build
-```
-
-### Lints and fixes files
-```
-pnpm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+> 献给哥哥，以及所有爱他的人。

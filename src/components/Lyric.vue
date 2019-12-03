@@ -37,7 +37,7 @@ export default {
   line-height: 1.4;
 
   background-image: linear-gradient(
-    left,
+    to right,
     #66ffff 0%,
     #00ff7f 25%,
     #f9c835 50%,
