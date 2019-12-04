@@ -5,7 +5,7 @@
     </div>
     <div :class="['center', 'center-text']" v-if="lineAnimation">愿你决定</div>
     <div
-      v-for="(item, index) in allImage"
+      v-for="(item, index) in playingImages"
       :key="'img_' + item + '_bg'"
       :style="{ backgroundImage: `url(${item})` }"
       :class="[
@@ -16,7 +16,7 @@
     />
 
     <div
-      v-for="(item, index) in allImage"
+      v-for="(item, index) in playingImages"
       :key="'img_' + item"
       :style="{ backgroundImage: `url(${item})` }"
       :class="['center', 'main-img', currentImgIndex === index ? 'active' : '']"
@@ -36,7 +36,7 @@
       ]"
       ref="buyVideo"
     >
-      <source src="/buy.mp4" type="video/mp4" />
+      <source :src="`${CDNURL}/buy.mp4`" type="video/mp4" />
     </video>
 
     <audio
@@ -49,7 +49,12 @@
       @pause="handlePause"
       @ended="handleEnded"
     >
-      <source src="/愿你决定.mp3" type="audio/mpeg" autoplay preload="auto" />
+      <source
+        :src="`${CDNURL}/愿你决定.mp3`"
+        type="audio/mpeg"
+        autoplay
+        preload="auto"
+      />
       Your browser does not support the audio element.
     </audio>
 
@@ -63,7 +68,10 @@
       @click="handlePlayerClick"
       @transitionend="handlePlayerShow"
     >
-      <img :class="isPlaying ? 'playing' : ''" src="/img/player.jpeg" />
+      <img
+        :class="isPlaying ? 'playing' : ''"
+        :src="`${CDNURL}/img/player.jpeg`"
+      />
     </div>
 
     <div :class="['center', 'tip', isShowTip ? 'showTip' : '']">
@@ -107,12 +115,12 @@
 import "normalize.css";
 import Lyric from "./components/Lyric.vue";
 import { convertLrcObject } from "./assets/js/utils";
-import { allImage } from "./assets/assets.json";
+import { allImages } from "./assets/assets.json";
 import NoSleep from "nosleep.js";
-// 打乱并且显示钱29张 歌曲最多支持29张图片
+// 歌曲最多支持29张图片
 const NEEDIMGLENGTH = 29;
-allImage.sort(() => Math.random() - 0.5).splice(NEEDIMGLENGTH);
 
+// 防止屏幕熄灭
 var noSleep = new NoSleep();
 document.addEventListener(
   "click",
@@ -132,16 +140,18 @@ export default {
     return {
       text: "",
       timer: null,
-      allImage: allImage,
+      allImages: [],
+      playingImages: [], //正在播放的图片
       lrcs: null,
-      currentImgIndex: -1, // -2为再见图片
+      currentImgIndex: -3, // -2为再见图片 -1是初始化的值
       lineAnimation: false,
       isShowPlayer: false,
       isPlayerInCorner: false,
       isPlaying: false,
       isShowTip: false,
       isCommentsDisabled: localStorage.getItem("isCommentsDisabled") === "true",
-      comments: []
+      comments: [],
+      CDNURL: this.$store.state.CDNURL
     };
   },
   mounted() {
@@ -150,6 +160,15 @@ export default {
     }, 200);
     // eslint-disable-next-line no-console
     console.info("源代码：https://github.com/KaiOrange/yuannijueding");
+
+    // 打乱图片的顺序 取其前29张 然后使用CDN
+    this.allImages = allImages
+      .sort(() => Math.random() - 0.5)
+      .slice(0, NEEDIMGLENGTH)
+      .map(item => this.CDNURL + item);
+
+    // 计算一下playingImages
+    this.currentImgIndex = -1;
 
     // 已废弃需要收费的API：http://musicapi.leanapp.cn/comment/music?id=187408
     this.axios
@@ -179,6 +198,21 @@ export default {
               );
       });
   },
+  watch: {
+    currentImgIndex(newValue) {
+      let cacheImgSize = 4; // 最多缓存数量
+      if (this.playingImages.length >= newValue + cacheImgSize) {
+        return;
+      } else if (this.playingImages.length === this.allImages.length) {
+        return;
+      } else {
+        this.playingImages = this.allImages.slice(
+          0,
+          Math.min(newValue + cacheImgSize, this.allImages.length)
+        );
+      }
+    }
+  },
   beforeDestroy() {
     this.stopLrcInterval();
   },
@@ -198,9 +232,11 @@ export default {
       if (!this.lrcs) {
         this.getLrc(data => {
           this.lrcs = convertLrcObject(data);
-          this.startLrcInterval();
+          if (!this.timer) {
+            this.startLrcInterval();
+          }
         });
-      } else {
+      } else if (!this.timer) {
         this.startLrcInterval();
       }
       let buyVideo = this.$refs.buyVideo;
@@ -209,7 +245,6 @@ export default {
       }
     },
     handlePause() {
-      this.stopLrcInterval();
       this.isPlaying = false;
       let buyVideo = this.$refs.buyVideo;
       if (buyVideo && !buyVideo.paused) {
@@ -223,10 +258,14 @@ export default {
     },
     startLrcInterval() {
       let myAudio = this.$refs.audio;
-      let imgLength = this.allImage.length;
+      let imgLength = this.allImages.length;
       let oldText = null;
       let buyVideoTime = 235;
       this.timer = setInterval(() => {
+        // 暂停的时候就不管了
+        if (!this.isPlaying) {
+          return;
+        }
         // 获取当前的播放时间 减去1秒修复了歌词不对应的问题
         var curTime = myAudio.currentTime - 1;
         let lrcs = this.lrcs;
@@ -422,6 +461,7 @@ body {
   }
 
   .comment {
+    color: #eeeeee;
     position: fixed;
     top: 0;
     right: 0;

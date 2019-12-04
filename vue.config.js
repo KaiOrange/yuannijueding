@@ -1,10 +1,7 @@
 module.exports = {
   pwa: {
     name: "愿你决定",
-    description: "愿你决定 - 张国荣",
-    display: "standalone",
-    theme_color: "#ffffff",
-    background_color: "#282b32",
+    themeColor: "#282b32",
     msTileColor: "#282b32",
     appleMobileWebAppCapable: "yes",
     appleMobileWebAppStatusBarStyle: "black",
@@ -14,6 +11,11 @@ module.exports = {
       appleTouchIcon: "img/icons/apple-touch-icon.png",
       maskIcon: "img/icons/android-chrome-192x192.png",
       msTileImage: "img/icons/msapplication-icon-144x144.png"
+    },
+    manifestOptions: {
+      description: "愿你决定 - 张国荣",
+      background_color: "#282b32",
+      display: "standalone"
     }
   }
 };
