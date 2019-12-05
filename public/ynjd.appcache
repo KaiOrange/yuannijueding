@@ -11,4 +11,5 @@ CACHE:
 *.lrc
 
 NETWORK:
+https://api.imjad.cn/cloudmusic/
 *
