@@ -1,0 +1,14 @@
+CACHE MANIFEST
+#version 2019-12-05
+
+CACHE:
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.mp3
+*.mp4
+*.lrc
+
+NETWORK:
+*

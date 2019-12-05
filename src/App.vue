@@ -197,6 +197,11 @@ export default {
                 toComments.splice(0, NEEDIMGLENGTH - comments.length)
               );
       });
+
+    // 页面加载完后首先加载一下歌词
+    this.getLrc(data => {
+      this.lrcs = convertLrcObject(data);
+    });
   },
   watch: {
     currentImgIndex(newValue) {
@@ -230,6 +235,7 @@ export default {
       this.isPlayerInCorner = true;
       this.isShowTip = false;
       if (!this.lrcs) {
+        // 防止歌词没有加载完 再次调用一下
         this.getLrc(data => {
           this.lrcs = convertLrcObject(data);
           if (!this.timer) {
