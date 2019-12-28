@@ -35,5 +35,5 @@ jobs:
           ARGS: "-avz --delete"
           SOURCE: "dist"
           REMOTE_HOST: "47.111.177.138"
-          REMOTE_USER: "action"
+          REMOTE_USER: "${{ secrets.REMOTE_USER }}"
           TARGET: "/home/www/yuannijueding"
