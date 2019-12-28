@@ -4,22 +4,13 @@
       <div class="line" @animationend="handleLineAnimationEnd"></div>
     </div>
     <div :class="['center', 'center-text']" v-if="lineAnimation">愿你决定</div>
-    <div
-      v-for="(item, index) in playingImages"
-      :key="'img_' + item + '_bg'"
-      :style="{ backgroundImage: `url(${item})` }"
-      :class="[
-        'center',
-        'main-img-bg',
-        currentImgIndex === index ? 'active' : ''
-      ]"
-    />
 
-    <div
+    <ImgWithBG
       v-for="(item, index) in playingImages"
       :key="'img_' + item"
-      :style="{ backgroundImage: `url(${item})` }"
-      :class="['center', 'main-img', currentImgIndex === index ? 'active' : '']"
+      :url="item"
+      :isShow="currentImgIndex === index"
+      :isNoTransition="currentImgIndex === -2"
     />
 
     <video
@@ -28,12 +19,7 @@
       :muted="true"
       :autoplay="false"
       :preload="true"
-      :class="[
-        'center',
-        'no-transition',
-        'main-img',
-        currentImgIndex === -2 ? 'active' : ''
-      ]"
+      :class="['center', 'buy-video', currentImgIndex === -2 ? 'active' : '']"
       ref="buyVideo"
     >
       <source :src="`${CDNURL}/buy.mp4`" type="video/mp4" />
@@ -114,6 +100,7 @@
 <script>
 import "normalize.css";
 import Lyric from "./components/Lyric.vue";
+import ImgWithBG from "./components/ImgWithBG.vue";
 import { convertLrcObject } from "./assets/js/utils";
 import { allImages } from "./assets/assets.json";
 import NoSleep from "nosleep.js";
@@ -134,7 +121,8 @@ document.addEventListener(
 export default {
   name: "app",
   components: {
-    Lyric
+    Lyric,
+    ImgWithBG
   },
   data: function() {
     return {
@@ -367,38 +355,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
   color: #ffffff;
 
-  .main-img {
+  .buy-video {
     width: 100%;
-    height: 100%;
     opacity: 0;
-    transition: opacity ease 1s;
-    background-color: transparent;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 100% auto;
 
     &.active {
       opacity: 1;
-    }
-
-    &.no-transition {
-      transition: none;
-    }
-  }
-
-  .main-img-bg {
-    width: 100vw;
-    height: 100vh;
-    opacity: 0;
-    transition: opacity ease 1s;
-    object-fit: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: auto 100%;
-    filter: blur(10px);
-
-    &.active {
-      opacity: 0.8;
     }
   }
 
