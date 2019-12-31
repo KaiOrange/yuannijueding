@@ -46,7 +46,7 @@ jobs:
         uses: burnett01/rsync-deployments@3.0
         with:
           switches: -avzr --delete
-          path: src/
+          path: dist/
           remote_path: /home/www/yuannijueding/dist
           remote_host: ynjd.kai666666.top
           remote_port: 80
