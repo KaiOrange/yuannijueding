@@ -41,13 +41,14 @@ jobs:
       - uses: actions/checkout@v1
         with:
           fetch-depth: 1
+
       - name: rsync deployments
         uses: burnett01/rsync-deployments@3.0
         with:
           switches: -avzr --delete
           path: src/
-          remote_path: "${{ secrets.TARGET }}"
-          remote_host: ${{ secrets.REMOTE_HOST }}
+          remote_path: /home/www/yuannijueding/dist
+          remote_host: ynjd.kai666666.top
           remote_port: 80
           remote_user: ${{ secrets.REMOTE_USER }}
           remote_key: ${{ secrets.ACCESS_TOKEN }}
