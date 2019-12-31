@@ -28,27 +28,13 @@ jobs:
         env:
           CI: true
       # Deploy
-      # - name: Deploy
-      #   uses: easingthemes/ssh-deploy@v2.0.7
-      #   env:
-      #     SSH_PRIVATE_KEY: ${{ secrets.ACCESS_TOKEN }}
-      #     ARGS: "-rltgoDzvO --delete"
-      #     SOURCE: "dist/"
-      #     REMOTE_HOST: "${{ secrets.REMOTE_HOST }}"
-      #     REMOTE_USER: "${{ secrets.REMOTE_USER }}"
-      #     TARGET: "${{ secrets.TARGET }}"
+      - name: Deploy
+        uses: easingthemes/ssh-deploy@v2.0.7
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.ACCESS_TOKEN }}
+          ARGS: "-avz --delete"
+          SOURCE: "dist/"
+          REMOTE_HOST: ynjd.kai666666.top
+          REMOTE_USER: "${{ secrets.REMOTE_USER }}"
+          TARGET: /home/www/yuannijueding/dist
 
-      - uses: actions/checkout@v1
-        with:
-          fetch-depth: 1
-
-      - name: rsync deployments
-        uses: burnett01/rsync-deployments@3.0
-        with:
-          switches: -avzr --delete
-          path: dist/
-          remote_path: /home/www/yuannijueding/dist
-          remote_host: ynjd.kai666666.top
-          remote_port: 80
-          remote_user: ${{ secrets.REMOTE_USER }}
-          remote_key: ${{ secrets.ACCESS_TOKEN }}
