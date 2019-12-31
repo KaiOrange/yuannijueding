@@ -35,6 +35,6 @@ jobs:
           ARGS: "-avz --delete"
           SOURCE: "dist/"
           REMOTE_HOST: ynjd.kai666666.top
-          REMOTE_USER: "${{ secrets.REMOTE_USER }}"
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: /home/www/yuannijueding/dist
 
