@@ -24,12 +24,12 @@ export default {
 
 <style scoped lang="scss">
 .lyric {
-  position: fixed;
+  position: absolute;
   bottom: 6vh;
   text-align: right;
   left: 0;
   right: 0;
-  margin: 0 5vw;
+  margin: 0 0.5rem;
   z-index: 10;
   color: #00ff7f;
   font-weight: bold;

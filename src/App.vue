@@ -101,7 +101,7 @@
 import "normalize.css";
 import Lyric from "./components/Lyric.vue";
 import ImgWithBG from "./components/ImgWithBG.vue";
-import { convertLrcObject } from "./assets/js/utils";
+import { convertLrcObject, convertChars2Emoji } from "./assets/js/utils";
 import { allImages } from "./assets/assets.json";
 import NoSleep from "nosleep.js";
 // 歌曲最多支持29张图片
@@ -171,13 +171,18 @@ export default {
       .then(res => {
         // 去掉回复别人的评论
         let toComments = [];
-        let comments = (res.data.comments || []).filter(item => {
-          if (item.beReplied && item.beReplied.length > 0) {
-            toComments.push(item);
-            return false;
-          }
-          return true;
-        });
+        let comments = (res.data.comments || [])
+          .filter(item => {
+            if (item.beReplied && item.beReplied.length > 0) {
+              toComments.push(item);
+              return false;
+            }
+            return true;
+          })
+          .map(item => {
+            item.content = convertChars2Emoji(item.content);
+            return item;
+          });
         this.comments =
           comments.length >= NEEDIMGLENGTH
             ? comments.splice(0, NEEDIMGLENGTH)
@@ -335,20 +340,29 @@ export default {
 </script>
 
 <style lang="scss">
-body {
+html {
   background: #282b32;
   overflow: hidden;
-  .audio {
-    top: 30%;
-    display: none;
+
+  body {
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+
+    .audio {
+      top: 30%;
+      display: none;
+    }
   }
 }
+
 .center {
-  position: fixed;
+  position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -388,16 +402,15 @@ body {
     transform-origin: center;
 
     &.show {
-      width: 70vmin;
-      height: 70vmin;
+      width: 7rem;
+      height: 7rem;
     }
 
     &.corner {
-      width: 14vmin;
-      height: 14vmin;
-      margin: 10vmin;
-      left: 0;
-      top: 0;
+      width: 60px;
+      height: 60px;
+      left: 45px;
+      top: 45px;
 
       img {
         animation: rotate linear 5s infinite;
@@ -408,6 +421,7 @@ body {
     img {
       width: 100%;
       height: 100%;
+      display: block;
 
       &.playing {
         animation-play-state: running;
@@ -430,13 +444,14 @@ body {
 
   .comment {
     color: #eeeeee;
-    position: fixed;
+    position: absolute;
     top: 0;
     right: 0;
-    padding-top: 3vmin;
-    padding-right: 3vmin;
+    padding-top: 15px;
+    padding-right: 15px;
     text-align: right;
-    max-width: 77vmin;
+    max-width: calc(10rem - 90px);
+    box-sizing: border-box;
     font-size: 13px;
     line-height: 1.4;
     transform: translate(100%, 0);
@@ -460,11 +475,11 @@ body {
 
   .btn-comment {
     position: absolute;
-    top: 20vmin;
-    left: 10vmin;
-    width: 7vmin;
-    height: 7vmin;
-    line-height: 7vmin;
+    top: 90px;
+    left: 45px;
+    width: 34px;
+    height: 34px;
+    line-height: 36px;
     text-align: center;
     transform: translateX(-50%);
     font-size: 16px;
@@ -496,42 +511,42 @@ body {
 
 @keyframes line-animation {
   18% {
-    height: 100vmax;
+    height: 10rem;
   }
   36% {
-    height: 100vmax;
+    height: 10rem;
     transform: rotate(90deg);
   }
   37% {
-    height: 100vw;
+    height: 10rem;
     transform: rotate(90deg);
   }
   50% {
-    height: 70vw;
+    height: 7rem;
     transform: rotate(90deg);
   }
 
   60% {
-    height: 70vw;
+    height: 7rem;
     transform: translate(0%, 30px) rotate(90deg);
   }
 
   90% {
-    height: 70vw;
+    height: 7rem;
     transform: translate(0%, 30px) rotate(90deg);
     left: 50%;
   }
 
   99% {
-    height: 70vw;
+    height: 7rem;
     transform: translate(0%, 30px) rotate(90deg);
-    left: 150vw;
+    left: 15rem;
     display: block;
   }
   100% {
-    height: 70vw;
+    height: 7rem;
     transform: translate(0%, 30px) rotate(90deg);
-    left: 150vw;
+    left: 15rem;
     display: none;
   }
 }
@@ -552,13 +567,13 @@ body {
 
   99% {
     opacity: 1;
-    left: -50vw;
+    left: -5rem;
     display: block;
   }
 
   100% {
     opacity: 1;
-    left: -50vw;
+    left: -5rem;
     display: none;
   }
 }
