@@ -30,7 +30,6 @@ export default {
   left: 0;
   right: 0;
   margin: 0 0.5rem;
-  z-index: 10;
   color: #00ff7f;
   font-weight: bold;
   font-size: 20px;

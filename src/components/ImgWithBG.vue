@@ -41,8 +41,11 @@ export default {
   overflow: hidden;
 
   .main-img-bg {
-    width: 100%;
-    height: 100%;
+    position: fixed;
+    left: -20px;
+    top: -20px;
+    right: -20px;
+    bottom: -20px;
     opacity: 0;
     transition: opacity ease 1s;
     object-fit: cover;
@@ -50,7 +53,7 @@ export default {
     background-position: center;
     background-size: auto 100%;
     filter: blur(10px);
-    position: relative;
+    overflow: hidden;
 
     &.active {
       opacity: 0.8;
@@ -82,6 +85,15 @@ export default {
     }
     .main-img {
       transition: none;
+    }
+  }
+}
+
+@media screen and (min-width: 970px) {
+  .img-with-bg {
+    .main-img-bg {
+      background-repeat: repeat;
+      background-size: 100% auto;
     }
   }
 }

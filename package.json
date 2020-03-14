@@ -12,6 +12,7 @@
     "core-js": "^2.6.5",
     "normalize.css": "^8.0.1",
     "nosleep.js": "^0.9.0",
+    "particles.js": "^2.0.0",
     "register-service-worker": "^1.6.2",
     "vue": "^2.6.10",
     "vue-axios": "^2.1.5",

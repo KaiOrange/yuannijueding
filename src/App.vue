@@ -3,15 +3,18 @@
     <div class="center" v-if="lineAnimation">
       <div class="line" @animationend="handleLineAnimationEnd"></div>
     </div>
+
     <div :class="['center', 'center-text']" v-if="lineAnimation">愿你决定</div>
 
-    <ImgWithBG
-      v-for="(item, index) in playingImages"
-      :key="'img_' + item"
-      :url="item"
-      :isShow="currentImgIndex === index"
-      :isNoTransition="currentImgIndex === -2"
-    />
+    <template v-for="(item, index) in playingImages">
+      <ImgWithBG
+        :key="'img_' + item"
+        v-show="currentImgIndex + 5 > index"
+        :url="item"
+        :isShow="currentImgIndex === index"
+        :isNoTransition="currentImgIndex === -2"
+      />
+    </template>
 
     <video
       :loop="false"
@@ -24,6 +27,28 @@
     >
       <source :src="`${CDNURL}/buy.mp4`" type="video/mp4" />
     </video>
+
+    <div v-if="!isCommentsDisabled">
+      <div
+        v-for="(item, index) in comments"
+        :key="'comment_' + item.commentId"
+        :class="[
+          'comment',
+          currentImgIndex > index
+            ? 'activated'
+            : currentImgIndex === index
+            ? 'active'
+            : ''
+        ]"
+      >
+        <div>{{ item.content }}</div>
+        <div>—— {{ item.user.nickname }}</div>
+      </div>
+    </div>
+
+    <Lyric :text="text" />
+
+    <div id="particles-js" :class="[isPlayerInCorner ? 'show' : '']"></div>
 
     <audio
       :controls="true"
@@ -64,24 +89,6 @@
       请点击上方图片以播放音乐
     </div>
 
-    <div v-if="!isCommentsDisabled">
-      <div
-        v-for="(item, index) in comments"
-        :key="'comment_' + item.commentId"
-        :class="[
-          'comment',
-          currentImgIndex > index
-            ? 'activated'
-            : currentImgIndex === index
-            ? 'active'
-            : ''
-        ]"
-      >
-        <div>{{ item.content }}</div>
-        <div>—— {{ item.user.nickname }}</div>
-      </div>
-    </div>
-
     <div
       :class="[
         'btn-comment',
@@ -92,8 +99,6 @@
     >
       评
     </div>
-
-    <Lyric :text="text" />
   </div>
 </template>
 
@@ -104,19 +109,7 @@ import ImgWithBG from "./components/ImgWithBG.vue";
 import { convertLrcObject, convertChars2Emoji } from "./assets/js/utils";
 import { allImages } from "./assets/assets.json";
 import NoSleep from "nosleep.js";
-// 歌曲最多支持29张图片
-const NEEDIMGLENGTH = 29;
-
-// 防止屏幕熄灭
-var noSleep = new NoSleep();
-document.addEventListener(
-  "click",
-  function enableNoSleep() {
-    document.removeEventListener("click", enableNoSleep, false);
-    noSleep.enable();
-  },
-  false
-);
+import "particles.js";
 
 export default {
   name: "app",
@@ -143,6 +136,18 @@ export default {
     };
   },
   mounted() {
+    // 防止屏幕熄灭
+    var noSleep = new NoSleep();
+    document.addEventListener(
+      "click",
+      function enableNoSleep() {
+        document.removeEventListener("click", enableNoSleep, false);
+        noSleep.enable();
+      },
+      false
+    );
+    window.particlesJS.load("particles-js", "particlesjs-config.json");
+
     setTimeout(() => {
       this.lineAnimation = true;
     }, 200);
@@ -152,7 +157,6 @@ export default {
     // 打乱图片的顺序 取其前29张 然后使用CDN
     this.allImages = allImages
       .sort(() => Math.random() - 0.5)
-      .slice(0, NEEDIMGLENGTH)
       .map(item => this.CDNURL + item);
 
     // 计算一下playingImages
@@ -171,7 +175,7 @@ export default {
       .then(res => {
         // 去掉回复别人的评论
         let toComments = [];
-        let comments = (res.data.comments || [])
+        this.comments = (res.data.comments || [])
           .filter(item => {
             if (item.beReplied && item.beReplied.length > 0) {
               toComments.push(item);
@@ -183,12 +187,6 @@ export default {
             item.content = convertChars2Emoji(item.content);
             return item;
           });
-        this.comments =
-          comments.length >= NEEDIMGLENGTH
-            ? comments.splice(0, NEEDIMGLENGTH)
-            : comments.concat(
-                toComments.splice(0, NEEDIMGLENGTH - comments.length)
-              );
       });
 
     // 页面加载完后首先加载一下歌词
@@ -258,7 +256,8 @@ export default {
     startLrcInterval() {
       let myAudio = this.$refs.audio;
       let imgLength = this.allImages.length;
-      let oldText = null;
+      let thisIndex = -1;
+      let oldIndex = thisIndex;
       let buyVideoTime = 235;
       this.timer = setInterval(() => {
         // 暂停的时候就不管了
@@ -275,6 +274,7 @@ export default {
             (lrcs[i + 1] ? curTime < lrcs[i + 1][0] : true)
           ) {
             this.text = lrcs[i][1];
+            thisIndex = i;
             break;
           }
         }
@@ -286,12 +286,8 @@ export default {
             buyVideo.currentTime = 0;
             buyVideo.play();
           }
-        } else if (
-          curTime < buyVideoTime &&
-          oldText !== this.text &&
-          this.text.trim()
-        ) {
-          oldText = this.text;
+        } else if (curTime < buyVideoTime && oldIndex !== thisIndex) {
+          oldIndex = thisIndex;
           this.currentImgIndex = ++this.currentImgIndex % imgLength;
         }
       }, 200);
@@ -368,6 +364,15 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #ffffff;
+
+  #particles-js {
+    opacity: 0;
+    transition: opacity ease-out 0.8s;
+
+    &.show {
+      opacity: 1;
+    }
+  }
 
   .buy-video {
     width: 100%;
